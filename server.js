@@ -13,6 +13,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api', apiRoutes);
 
+app.use('/api-doc', express.static('api-doc'))
+
 app.listen(PORT, async () => {
   try {
     logInfo('Setting up database tables...');
@@ -22,7 +24,7 @@ app.listen(PORT, async () => {
     logInfo('Adding test data...');
     await sequelizeInstance.loadTestData()
     logInfo('DONE adding test data');
-    logInfo('API Server listening on port 3000!');
+    logInfo(`API Server listening on port ${PORT}!`);
   } catch(e) {
     logError(e)
   }

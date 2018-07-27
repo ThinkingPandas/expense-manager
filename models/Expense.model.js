@@ -13,9 +13,5 @@ module.exports = sequelize => {
     },
   });
 
-  Expense.associate = function(models) {
-    models.Expense.belongsTo(models.Category, { foreignKey: 'fk_category' });
-  };
-
   return Expense;
 };

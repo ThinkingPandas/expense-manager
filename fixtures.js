@@ -1,6 +1,7 @@
 const { FAKE_DATA_SEED } = require('./config.js');
 const moment = require('moment');
 const faker = require('faker');
+const _ = require('lodash');
 
 // add in seed for fake data
 faker.seed(FAKE_DATA_SEED);
@@ -58,6 +59,7 @@ module.exports = () => {
       title: faker.commerce.product(),
       date: faker.date.between(moment().subtract(30, 'days').toDate(), moment().toDate()),
       value: faker.commerce.price(),
+      category_id: _.sample(categories).data.id,
     }
   }));
   return [...categories, ...expenses];

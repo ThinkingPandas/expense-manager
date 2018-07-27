@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { Expense } = sequelizeInstance.db.models;
+const { Expense, Category } = sequelizeInstance.db.models;
 
 /*
   @api [post] /api/expenses
@@ -45,12 +45,12 @@ module.exports.createOne = async (req, res, next) => {
 
     const expenseResult = await Expense.create({
       title,
-      ...(!_.isNull(description) ? {description} : {}),
+      ...(!_.isNull(description) ? { description } : {}),
     });
 
     return res.json({
       data: expenseResult,
-      message: `Expense ${expenseResult.id} created.`
+      message: `Expense ${expenseResult.id} created.`,
     });
   } catch (e) {
     next(e);
@@ -86,7 +86,13 @@ module.exports.createOne = async (req, res, next) => {
 */
 module.exports.fetchAll = async (req, res, next) => {
   try {
-    const expenseResults = await Expense.findAll({ raw: true, });
+    const expenseResults = await Expense.findAll({
+      include: [{
+        model: Category,
+        as: 'category',
+        attributes: ['title'],
+      }],
+    });
     return res.json(expenseResults);
   } catch (e) {
     next(e);
@@ -128,13 +134,16 @@ module.exports.fetchOne = async (req, res, next) => {
   try {
     const { expense_id } = req.params;
 
-    const expenseResult = await Expense.findOne({ where: { id: expense_id }, raw: true, });
+    const expenseResult = await Expense.findOne({
+      where: { id: expense_id },
+      raw: true,
+    });
 
-    if(!expenseResult) {
+    if (!expenseResult) {
       return next({
         statusCode: 400,
         message: 'Invalid expense id',
-      })
+      });
     }
 
     return res.json(expenseResult);
@@ -191,23 +200,23 @@ module.exports.updateOne = async (req, res, next) => {
     const { expense_id } = req.params;
     const { title, description } = req.body;
 
-    const expenseResult = await Expense.findOne({ where: { id: expense_id }, });
+    const expenseResult = await Expense.findOne({ where: { id: expense_id } });
 
-    if(!expenseResult) {
+    if (!expenseResult) {
       return next({
         statusCode: 400,
         message: 'Invalid expense id',
-      })
+      });
     }
 
     await expenseResult.update({
-      ...(!_.isNull(title) ? {title} : {}),
-      ...(!_.isNull(description) ? {description} : {}),
-    })
+      ...(!_.isNull(title) ? { title } : {}),
+      ...(!_.isNull(description) ? { description } : {}),
+    });
 
     return res.json({
       data: expenseResult,
-      message: `Expense ${expense_id} updated.`
+      message: `Expense ${expense_id} updated.`,
     });
   } catch (e) {
     next(e);
@@ -236,22 +245,21 @@ module.exports.deleteOne = async (req, res, next) => {
   try {
     const { expense_id } = req.params;
 
-    const expenseResult = await Expense.findOne({ where: { id: expense_id }, });
+    const expenseResult = await Expense.findOne({ where: { id: expense_id } });
 
-    if(!expenseResult) {
+    if (!expenseResult) {
       return next({
         statusCode: 400,
         message: 'Invalid expense id',
-      })
+      });
     }
 
-    await expenseResult.destroy()
+    await expenseResult.destroy();
 
     return res.json({
-      message: `Expense ${expense_id} deleted.`
+      message: `Expense ${expense_id} deleted.`,
     });
   } catch (e) {
     next(e);
   }
 };
-

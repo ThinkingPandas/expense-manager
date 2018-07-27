@@ -1,5 +1,4 @@
 const Sequelize = require('sequelize');
-const uuidv4 = require('uuid/v4');
 
 module.exports = (sequelize) => {
   const Category = sequelize.define('Category', {
@@ -8,7 +7,7 @@ module.exports = (sequelize) => {
     id: {
       type: Sequelize.UUID,
       primaryKey: true,
-      defaultValue: uuidv4(),
+      defaultValue: Sequelize.UUIDV4,
     }
   });
 

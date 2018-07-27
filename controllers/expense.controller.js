@@ -12,12 +12,18 @@ const { Expense, Category } = sequelizeInstance.db.models;
       schema:
         type: object
         properties:
+          category_id:
+            type: string
+            example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
           title:
             type: string
             example: Leisure
-          description:
+          date:
             type: string
-            example: Neque blanditiis consequuntur esse autem harum eligendi aut.
+            example: 2018-07-27T18:33:39.000Z
+          value:
+            type: float
+            example: 100.00
   responses:
     "200":
       schema:
@@ -26,26 +32,50 @@ const { Expense, Category } = sequelizeInstance.db.models;
           title:
             type: string
             example: Leisure
-          description:
+          date:
             type: string
-            example: Neque blanditiis consequuntur esse autem harum eligendi aut.
+            example: 2018-07-27T14:19:45.000Z
           id:
             type: string
             example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
+          value:
+            type: float
+            example: 100.00
+          category_id:
+            type: string
+            example: 50b8-47af-bd89-49dfb4d0419f-0a5d0ccf
           createdAt:
             type: string
             example: 2018-07-27T14:19:45.000Z
           updatedAt:
             type: string
             example: 2018-07-27T14:19:45.000Z
+          category:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Business
 */
 module.exports.createOne = async (req, res, next) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, category_id, value, date } = req.body;
+
+    const category = await Category.findOne({ where: { id: category_id }, raw: true});
+
+    if(!_.isNull(category_id) && !category) {
+      return next({
+        statusCode: 400,
+        message: `Category ${category_id} does not exist`
+      })
+    }
 
     const expenseResult = await Expense.create({
       title,
+      value,
+      date,
       ...(!_.isNull(description) ? { description } : {}),
+      ...(!_.isNull(category_id) ? { category_id } : {}),
     });
 
     return res.json({
@@ -71,22 +101,35 @@ module.exports.createOne = async (req, res, next) => {
             title:
               type: string
               example: Leisure
-            description:
+            date:
               type: string
-              example: Neque blanditiis consequuntur esse autem harum eligendi aut.
+              example: 2018-07-27T14:19:45.000Z
             id:
               type: string
               example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
+            value:
+              type: float
+              example: 100.00
+            category_id:
+              type: string
+              example: 50b8-47af-bd89-49dfb4d0419f-0a5d0ccf
             createdAt:
               type: string
               example: 2018-07-27T14:19:45.000Z
             updatedAt:
               type: string
               example: 2018-07-27T14:19:45.000Z
+            category:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Business
 */
 module.exports.fetchAll = async (req, res, next) => {
   try {
     const expenseResults = await Expense.findAll({
+      order: [['updatedAt', 'DESC']],
       include: [{
         model: Category,
         as: 'category',
@@ -116,18 +159,30 @@ module.exports.fetchAll = async (req, res, next) => {
           title:
             type: string
             example: Leisure
-          description:
+          date:
             type: string
-            example: Neque blanditiis consequuntur esse autem harum eligendi aut.
+            example: 2018-07-27T14:19:45.000Z
           id:
             type: string
             example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
+          value:
+            type: float
+            example: 100.00
+          category_id:
+            type: string
+            example: 50b8-47af-bd89-49dfb4d0419f-0a5d0ccf
           createdAt:
             type: string
             example: 2018-07-27T14:19:45.000Z
           updatedAt:
             type: string
             example: 2018-07-27T14:19:45.000Z
+          category:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Business
 */
 
 module.exports.fetchOne = async (req, res, next) => {
@@ -137,6 +192,11 @@ module.exports.fetchOne = async (req, res, next) => {
     const expenseResult = await Expense.findOne({
       where: { id: expense_id },
       raw: true,
+      include: [{
+        model: Category,
+        as: 'category',
+        attributes: ['title'],
+      }],
     });
 
     if (!expenseResult) {
@@ -168,12 +228,18 @@ module.exports.fetchOne = async (req, res, next) => {
       schema:
         type: object
         properties:
+          category_id:
+            type: string
+            example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
           title:
             type: string
             example: Leisure
-          description:
+          date:
             type: string
-            example: Neque blanditiis consequuntur esse autem harum eligendi aut.
+            example: 2018-07-27T18:33:39.000Z
+          value:
+            type: float
+            example: 100.00
   responses:
     "200":
       schema:
@@ -182,18 +248,30 @@ module.exports.fetchOne = async (req, res, next) => {
           title:
             type: string
             example: Leisure
-          description:
+          date:
             type: string
-            example: Neque blanditiis consequuntur esse autem harum eligendi aut.
+            example: 2018-07-27T14:19:45.000Z
           id:
             type: string
             example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
+          value:
+            type: float
+            example: 100.00
+          category_id:
+            type: string
+            example: 50b8-47af-bd89-49dfb4d0419f-0a5d0ccf
           createdAt:
             type: string
             example: 2018-07-27T14:19:45.000Z
           updatedAt:
             type: string
             example: 2018-07-27T14:19:45.000Z
+          category:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Business
 */
 module.exports.updateOne = async (req, res, next) => {
   try {

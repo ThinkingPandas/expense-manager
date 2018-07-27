@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { Category } = sequelizeInstance.db.models;
 
-
 /*
   @api [post] /api/categories
   description: Create a category
@@ -46,12 +45,12 @@ module.exports.createOne = async (req, res, next) => {
 
     const categoryResult = await Category.create({
       title,
-      ...(!_.isNull(description) ? {description} : {}),
+      ...(!_.isNull(description) ? { description } : {}),
     });
 
     return res.json({
       data: categoryResult,
-      message: `Category ${categoryResult.id} created.`
+      message: `Category ${categoryResult.id} created.`,
     });
   } catch (e) {
     next(e);
@@ -87,7 +86,10 @@ module.exports.createOne = async (req, res, next) => {
 */
 module.exports.fetchAll = async (req, res, next) => {
   try {
-    const categoryResults = await Category.findAll({ raw: true, });
+    const categoryResults = await Category.findAll({
+      raw: true,
+      order: [['title', 'ASC']],
+    });
     return res.json(categoryResults);
   } catch (e) {
     next(e);
@@ -129,13 +131,16 @@ module.exports.fetchOne = async (req, res, next) => {
   try {
     const { category_id } = req.params;
 
-    const categoryResult = await Category.findOne({ where: { id: category_id }, raw: true, });
+    const categoryResult = await Category.findOne({
+      where: { id: category_id },
+      raw: true,
+    });
 
-    if(!categoryResult) {
+    if (!categoryResult) {
       return next({
         statusCode: 400,
         message: 'Invalid category id',
-      })
+      });
     }
 
     return res.json(categoryResult);
@@ -192,23 +197,25 @@ module.exports.updateOne = async (req, res, next) => {
     const { category_id } = req.params;
     const { title, description } = req.body;
 
-    const categoryResult = await Category.findOne({ where: { id: category_id }, });
+    const categoryResult = await Category.findOne({
+      where: { id: category_id },
+    });
 
-    if(!categoryResult) {
+    if (!categoryResult) {
       return next({
         statusCode: 400,
         message: 'Invalid category id',
-      })
+      });
     }
 
     await categoryResult.update({
-      ...(!_.isNull(title) ? {title} : {}),
-      ...(!_.isNull(description) ? {description} : {}),
-    })
+      ...(!_.isNull(title) ? { title } : {}),
+      ...(!_.isNull(description) ? { description } : {}),
+    });
 
     return res.json({
       data: categoryResult,
-      message: `Category ${category_id} updated.`
+      message: `Category ${category_id} updated.`,
     });
   } catch (e) {
     next(e);
@@ -237,22 +244,23 @@ module.exports.deleteOne = async (req, res, next) => {
   try {
     const { category_id } = req.params;
 
-    const categoryResult = await Category.findOne({ where: { id: category_id }, });
+    const categoryResult = await Category.findOne({
+      where: { id: category_id },
+    });
 
-    if(!categoryResult) {
+    if (!categoryResult) {
       return next({
         statusCode: 400,
         message: 'Invalid category id',
-      })
+      });
     }
 
-    await categoryResult.destroy()
+    await categoryResult.destroy();
 
     return res.json({
-      message: `Category ${category_id} deleted.`
+      message: `Category ${category_id} deleted.`,
     });
   } catch (e) {
     next(e);
   }
 };
-

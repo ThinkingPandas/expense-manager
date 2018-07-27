@@ -2,6 +2,7 @@ require('./globals.js')
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const { PORT } = require('./config.js');
 const app = express();
 
 // routes
@@ -12,7 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api', apiRoutes);
 
-app.listen(process.env.PORT || 3000, async () => {
+app.listen(PORT, async () => {
   try {
     logInfo('Setting up database tables...');
     await sequelizeInstance.db.sync()

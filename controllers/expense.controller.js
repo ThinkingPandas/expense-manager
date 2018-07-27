@@ -129,7 +129,7 @@ module.exports.createOne = async (req, res, next) => {
 module.exports.fetchAll = async (req, res, next) => {
   try {
     const expenseResults = await Expense.findAll({
-      order: [['updatedAt', 'DESC']],
+      order: [['date', 'DESC']],
       include: [{
         model: Category,
         as: 'category',

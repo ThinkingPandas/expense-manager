@@ -1,37 +1,93 @@
+const _ = require('lodash');
+const { Expense } = sequelizeInstance.db.models;
+
 /*
-  @api [get] /api/expenses
-  description: Get all expenses
+  @api [post] /api/expenses
+  description: Create a expense
   tags: ['Expenses']
   parameters:
     - in: body
       name: body
-      description: Login a user
       required: true
       schema:
         type: object
         properties:
-          email:
+          title:
             type: string
-            example: "demo@demo.com"
-          password:
+            example: Leisure
+          description:
             type: string
-            example: "demo"
+            example: Neque blanditiis consequuntur esse autem harum eligendi aut.
   responses:
     "200":
-      description: "Login token"
       schema:
         type: object
         properties:
-          data:
-            type: object
-            properties:
-              token:
-                type: string
-                example: "JWT_TOKEN HERE"
+          title:
+            type: string
+            example: Leisure
+          description:
+            type: string
+            example: Neque blanditiis consequuntur esse autem harum eligendi aut.
+          id:
+            type: string
+            example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
+          createdAt:
+            type: string
+            example: 2018-07-27T14:19:45.000Z
+          updatedAt:
+            type: string
+            example: 2018-07-27T14:19:45.000Z
+*/
+module.exports.createOne = async (req, res, next) => {
+  try {
+    const { title, description } = req.body;
+
+    const expenseResult = await Expense.create({
+      title,
+      ...(!_.isNull(description) ? {description} : {}),
+    });
+
+    return res.json({
+      data: expenseResult,
+      message: `Expense ${expenseResult.id} created.`
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+/*
+  @api [get] /api/expenses
+  description: Get all expenses
+  tags: ['Expenses']
+  responses:
+    "200":
+      schema:
+        type: array
+        items:
+          type: object
+          properties:
+            title:
+              type: string
+              example: Leisure
+            description:
+              type: string
+              example: Neque blanditiis consequuntur esse autem harum eligendi aut.
+            id:
+              type: string
+              example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
+            createdAt:
+              type: string
+              example: 2018-07-27T14:19:45.000Z
+            updatedAt:
+              type: string
+              example: 2018-07-27T14:19:45.000Z
 */
 module.exports.fetchAll = async (req, res, next) => {
   try {
-    return res.json([]);
+    const expenseResults = await Expense.findAll({ raw: true, });
+    return res.json(expenseResults);
   } catch (e) {
     next(e);
   }
@@ -42,35 +98,46 @@ module.exports.fetchAll = async (req, res, next) => {
   description: Fetch expense details
   tags: ['Expenses']
   parameters:
-    - in: body
-      name: body
-      description: Login a user
+    - in: path
+      name: expense_id
       required: true
-      schema:
-        type: object
-        properties:
-          email:
-            type: string
-            example: "demo@demo.com"
-          password:
-            type: string
-            example: "demo"
+      type: string
   responses:
     "200":
-      description: "Login token"
       schema:
         type: object
         properties:
-          data:
-            type: object
-            properties:
-              token:
-                type: string
-                example: "JWT_TOKEN HERE"
+          title:
+            type: string
+            example: Leisure
+          description:
+            type: string
+            example: Neque blanditiis consequuntur esse autem harum eligendi aut.
+          id:
+            type: string
+            example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
+          createdAt:
+            type: string
+            example: 2018-07-27T14:19:45.000Z
+          updatedAt:
+            type: string
+            example: 2018-07-27T14:19:45.000Z
 */
+
 module.exports.fetchOne = async (req, res, next) => {
   try {
-    return res.json({});
+    const { expense_id } = req.params;
+
+    const expenseResult = await Expense.findOne({ where: { id: expense_id }, raw: true, });
+
+    if(!expenseResult) {
+      return next({
+        statusCode: 400,
+        message: 'Invalid expense id',
+      })
+    }
+
+    return res.json(expenseResult);
   } catch (e) {
     next(e);
   }
@@ -81,35 +148,67 @@ module.exports.fetchOne = async (req, res, next) => {
   description: Update a expense
   tags: ['Expenses']
   parameters:
+    - in: path
+      name: expense_id
+      required: true
+      example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
+      type: string
     - in: body
       name: body
-      description: Login a user
       required: true
       schema:
         type: object
         properties:
-          email:
+          title:
             type: string
-            example: "demo@demo.com"
-          password:
+            example: Leisure
+          description:
             type: string
-            example: "demo"
+            example: Neque blanditiis consequuntur esse autem harum eligendi aut.
   responses:
     "200":
-      description: "Login token"
       schema:
         type: object
         properties:
-          data:
-            type: object
-            properties:
-              token:
-                type: string
-                example: "JWT_TOKEN HERE"
+          title:
+            type: string
+            example: Leisure
+          description:
+            type: string
+            example: Neque blanditiis consequuntur esse autem harum eligendi aut.
+          id:
+            type: string
+            example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
+          createdAt:
+            type: string
+            example: 2018-07-27T14:19:45.000Z
+          updatedAt:
+            type: string
+            example: 2018-07-27T14:19:45.000Z
 */
 module.exports.updateOne = async (req, res, next) => {
   try {
-    return res.json({});
+    const { expense_id } = req.params;
+    const { title, description } = req.body;
+
+    const expenseResult = await Expense.findOne({ where: { id: expense_id }, });
+
+    if(!expenseResult) {
+      return next({
+        statusCode: 400,
+        message: 'Invalid expense id',
+      })
+    }
+
+    await expenseResult.update({
+      ...(!_.isNull(title) ? {title} : {}),
+      ...(!_.isNull(description) ? {description} : {}),
+    })
+
+    return res.json({
+      data: expenseResult,
+      message: `Expense ${expense_id} updated.`
+    });
   } catch (e) {
     next(e);
   }
@@ -120,35 +219,37 @@ module.exports.updateOne = async (req, res, next) => {
   description: Delete a expense
   tags: ['Expenses']
   parameters:
-    - in: body
-      name: body
-      description: Login a user
+    - in: path
+      name: expense_id
       required: true
-      schema:
-        type: object
-        properties:
-          email:
-            type: string
-            example: "demo@demo.com"
-          password:
-            type: string
-            example: "demo"
+      example: 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f
+      type: string
   responses:
     "200":
-      description: "Login token"
       schema:
         type: object
         properties:
-          data:
-            type: object
-            properties:
-              token:
-                type: string
-                example: "JWT_TOKEN HERE"
+          message:
+            example: Expense 0a5d0ccf-50b8-47af-bd89-49dfb4d0419f deleted.
 */
 module.exports.deleteOne = async (req, res, next) => {
   try {
-    return res.json({});
+    const { expense_id } = req.params;
+
+    const expenseResult = await Expense.findOne({ where: { id: expense_id }, });
+
+    if(!expenseResult) {
+      return next({
+        statusCode: 400,
+        message: 'Invalid expense id',
+      })
+    }
+
+    await expenseResult.destroy()
+
+    return res.json({
+      message: `Expense ${expense_id} deleted.`
+    });
   } catch (e) {
     next(e);
   }

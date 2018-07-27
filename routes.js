@@ -11,6 +11,7 @@ const categoryCtrl = require('./controllers/category.controller.js');
 
 // expenses routes
 router.route('/expenses')
+  .post(expenseCtrl.createOne)
   .get(expenseCtrl.fetchAll)
 router.route('/expenses/:category_id')
   .get(expenseCtrl.fetchOne)
@@ -28,6 +29,7 @@ router.route('/reports')
 
 // categories routes
 router.route('/categories')
+  .post(categoryCtrl.createOne)
   .get(categoryCtrl.fetchAll)
 router.route('/categories/:category_id')
   .get(categoryCtrl.fetchOne)

@@ -1,0 +1,31 @@
+{
+  "swagger": "2.0",
+  "x-api-id": "Expense Manager API Explorer",
+  "info": {
+    "version": "1.0.0",
+    "title": "Expense Manager API Explorer"
+  },
+  "produces": [
+    "application/json",
+    "multipart/form-data"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "schemes": [
+    "HTTP_PROTOCOL"
+  ],
+  "host": "HOST_STRING",
+  "securityDefinitions": {
+    "APIKeyHeader": {
+      "type": "apiKey",
+      "in": "header",
+      "name": "X-Session-Token"
+    }
+  },
+  "security": [{
+    "APIKeyHeader": []
+  }],
+  "definitions": {},
+  "paths": {}
+}

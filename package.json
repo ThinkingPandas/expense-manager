@@ -7,6 +7,7 @@
     "start:production": "NODE_ENV=production node server.js",
     "develop:api": "DEBUG=app* npm start",
     "develop:web": "( cd web ; npm start )",
+    "build:api-doc": "node scripts/buildSwaggerJson.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

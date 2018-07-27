@@ -1,18 +1,78 @@
 import React from 'react';
 import moment from 'moment';
 import numeral from 'numeral';
+import { Link } from 'simple-react-router';
 import ReactTooltip from 'react-tooltip';
 import { inject, observer } from 'mobx-react';
 import '../App.scss';
 
-import HeaderComponent from '../components/Header.component.js';
+import HeaderComponent from '../components/Header/Header.component.js';
 
 @inject('expenseStore')
 @observer
 class Dashboard extends React.Component {
+  state = {
+    createExpenseModalOpened: false,
+  }
+
   async componentWillMount() {
     const { fetchAll } = this.props.expenseStore;
     await fetchAll();
+  }
+
+  renderCreateExpenseFormModal = () => {
+    render() {
+      <Modal
+        onClose={() => this._handleControlModal('createExpense', 'close')}
+        onSave={() => this._handleControlModal('createExpense', 'close')}
+        title="Create Expense"
+      >
+        <div className="form-group">
+          <input
+            placeholder="Title"
+            type="text"
+            class="form-control form-control-sm"
+          />
+        </div>
+        <div className="form-group">
+          <select
+            className="form-control form-control-sm"
+            onChange={() =>
+              this._handleControlModal('addCategory', 'open')
+            }
+          >
+            <option disabled selected>
+              Category
+            </option>
+            <option>+ Add Category</option>
+          </select>
+        </div>
+
+        <div className="form-group">
+          <input
+            required
+            type="date"
+            class="form-control form-control-sm"
+          />
+        </div>
+
+        <div className="form-group">
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text" id="inputGroupPrepend3">
+                ₱
+              </span>
+            </div>
+            <input
+              type="number"
+              className=" form-control"
+              placeholder="0.00"
+              aria-describedby="inputGroupPrepend3"
+            />
+          </div>
+        </div>
+      </Modal>
+    }
   }
 
   render() {
@@ -39,20 +99,18 @@ class Dashboard extends React.Component {
               </div>
               <div className="action-buttons row mx-0 my-2">
                 <div className="col-sm-4 px-0 col-6 d-flex justify-content-center">
-                  <div
-                    className="btn"
-                    onClick={() => this._handleNavigate('showReport')}
-                  >
-                    <small>SHOW REPORT</small>
-                  </div>
+                  <Link href="/report">
+                    <div className="btn">
+                      <small>SHOW REPORT</small>
+                    </div>
+                  </Link>
                 </div>
                 <div className="col-sm-4 px-0 col-6 d-flex justify-content-center">
-                  <div
-                    className="btn"
-                    onClick={() => this._handleNavigate('viewCategory')}
-                  >
-                    <small>CATEGORIES</small>
-                  </div>
+                  <Link href="/categories">
+                    <div className="btn">
+                      <small>CATEGORIES</small>
+                    </div>
+                  </Link>
                 </div>
                 <div className="col-sm-4 col-12 d-flex justify-content-center em-expense">
                   <div

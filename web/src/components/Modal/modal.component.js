@@ -15,7 +15,14 @@ class Modal extends React.Component {
   }
 
   render() {
-    let {className, onClose, children, title, onSave, onSaveText} = this.state;
+    let {
+      className,
+      onClose,
+      children,
+      title,
+      onSave,
+      onSaveText,
+    } = this.state;
     return (
       <div className={`em-expense-modal ${className}`}>
         <div className="paper-modal">
@@ -36,11 +43,10 @@ class Modal extends React.Component {
             </div>
           </div>
         </div>
-        <div className="overlay" onClick={onClose}>
-        </div>
+        <div className="overlay" onClick={onClose} />
       </div>
-  );
-}
+    );
+  }
 }
 
 export default Modal;

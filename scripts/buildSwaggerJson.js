@@ -14,7 +14,7 @@ function buildSwagger(arr, filename) {
     base: 'api-doc/swaggerBase.json',
   }).then(generatedSwagger => {
     generatedSwagger = generatedSwagger
-      .replace('HOST_STRING', `${HTTP_PROTOCOL}://${HOST}:${PORT}`)
+      .replace('HOST_STRING', `${HOST}:${PORT}`)
       .replace('HTTP_PROTOCOL', HTTP_PROTOCOL);
 
     fs.writeFile(`./api-doc/${filename}`, generatedSwagger, 'utf8', err => {

@@ -7,76 +7,23 @@ import { inject, observer } from 'mobx-react';
 import '../App.scss';
 
 import HeaderComponent from '../components/Header/Header.component.js';
+import ModalComponent from '../components/Modal/modal.component.js';
 
 @inject('expenseStore')
 @observer
 class Dashboard extends React.Component {
   state = {
     createExpenseModalOpened: false,
-  }
+  };
 
   async componentWillMount() {
     const { fetchAll } = this.props.expenseStore;
     await fetchAll();
   }
 
-  renderCreateExpenseFormModal = () => {
-    render() {
-      <Modal
-        onClose={() => this._handleControlModal('createExpense', 'close')}
-        onSave={() => this._handleControlModal('createExpense', 'close')}
-        title="Create Expense"
-      >
-        <div className="form-group">
-          <input
-            placeholder="Title"
-            type="text"
-            class="form-control form-control-sm"
-          />
-        </div>
-        <div className="form-group">
-          <select
-            className="form-control form-control-sm"
-            onChange={() =>
-              this._handleControlModal('addCategory', 'open')
-            }
-          >
-            <option disabled selected>
-              Category
-            </option>
-            <option>+ Add Category</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <input
-            required
-            type="date"
-            class="form-control form-control-sm"
-          />
-        </div>
-
-        <div className="form-group">
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <span class="input-group-text" id="inputGroupPrepend3">
-                ₱
-              </span>
-            </div>
-            <input
-              type="number"
-              className=" form-control"
-              placeholder="0.00"
-              aria-describedby="inputGroupPrepend3"
-            />
-          </div>
-        </div>
-      </Modal>
-    }
-  }
-
   render() {
     const { expensesList } = this.props.expenseStore;
+    const { createExpenseModalOpened } = this.state;
 
     return (
       <div className="ExpenseManager">
@@ -116,7 +63,7 @@ class Dashboard extends React.Component {
                   <div
                     className="btn"
                     onClick={() =>
-                      this._handleControlModal('createExpense', 'open')
+                      this.setState({ createExpenseModalOpened: true })
                     }
                   >
                     <small>CREATE EXPENSE</small>
@@ -175,6 +122,57 @@ class Dashboard extends React.Component {
             </div>
           </div>
         </div>
+
+        {createExpenseModalOpened && (
+          <ModalComponent
+            onClose={() => this.setState({ createExpenseModalOpened: false })}
+            onSave={() => this.submitNewExpense()}
+            title="Create Expense"
+          >
+            <div className="form-group">
+              <input
+                placeholder="Title"
+                type="text"
+                class="form-control form-control-sm"
+              />
+            </div>
+            <div className="form-group">
+              <select
+                className="form-control form-control-sm"
+                onChange={() => this._handleControlModal('addCategory', 'open')}
+              >
+                <option disabled selected>
+                  Category
+                </option>
+                <option>+ Add Category</option>
+              </select>
+            </div>
+
+            <div className="form-group">
+              <input
+                required
+                type="date"
+                class="form-control form-control-sm"
+              />
+            </div>
+
+            <div className="form-group">
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text" id="inputGroupPrepend3">
+                    ₱
+                  </span>
+                </div>
+                <input
+                  type="number"
+                  className=" form-control"
+                  placeholder="0.00"
+                  aria-describedby="inputGroupPrepend3"
+                />
+              </div>
+            </div>
+          </ModalComponent>
+        )}
       </div>
     );
   }

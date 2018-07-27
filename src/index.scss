@@ -1,0 +1,58 @@
+html, body {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #e6e6e6!important;
+}
+
+#root {
+  height: 100%;
+}
+
+.button-sucess {
+  background-color: #00827f;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+  color: white;
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.button-danger {
+  background-color: #dc3545;
+  color: white;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+
+  &:hover {
+    opacity: 0.5;
+  }
+}
+
+.word-break-all {
+  word-break: break-all;
+}
+
+
+.circle-btn {
+  padding: 0px 5px;
+  border-radius: 20px;
+  background-color: gray;
+  color: white;
+  margin-left: 5px;
+  cursor:pointer;
+
+  opacity: 1;
+  transition: opacity 0.5s ease;
+
+  &:hover {
+    opacity: 0.5;
+  }
+}

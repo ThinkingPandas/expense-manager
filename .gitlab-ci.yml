@@ -1,0 +1,28 @@
+image: node:latest
+
+before_script:
+  - mkdir -p ~/.ssh
+  - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+  - chmod 600 ~/.ssh/id_rsa
+  - ssh-keyscan -H 'thinkingpandas.com' >> ~/.ssh/known_hosts
+  - cd web && npm install && npm run build
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - deploy
+
+deploy to production:
+  stage: deploy
+  script:
+    - git config --global user.name "Justin Sanciangco"
+    - git config --global user.email "justin@thinkingpandas.com"
+    - rm -rf .git
+    - git add .
+    - git add -f build/
+    - git rm --cached -r web
+    - git commit -m 'deployment'
+    - git remote add dokku dokku@thinkingpandas.com:expense-manager
+    - git push dokku master --force

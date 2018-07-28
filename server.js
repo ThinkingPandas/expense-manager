@@ -1,4 +1,4 @@
-require('./globals.js')
+require('./globals.js');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -12,21 +12,20 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api', apiRoutes);
-
-app.use('/api-doc', express.static('api-doc'))
-app.use('/app', express.static('build'))
+app.use('/api-doc', express.static('api-doc'));
+app.use('/', express.static('build'));
 
 app.listen(PORT, async () => {
   try {
     logInfo('Setting up database tables...');
-    await sequelizeInstance.db.sync()
+    await sequelizeInstance.db.sync();
     logInfo('DONE Setting up database tables');
 
     logInfo('Adding test data...');
-    await sequelizeInstance.loadTestData()
+    await sequelizeInstance.loadTestData();
     logInfo('DONE adding test data');
     logInfo(`API Server listening on port ${PORT}!`);
-  } catch(e) {
-    logError(e)
+  } catch (e) {
+    logError(e);
   }
 });

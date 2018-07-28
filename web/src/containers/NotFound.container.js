@@ -4,6 +4,12 @@ import '../App.scss';
 import HeaderComponent from '../components/Header/Header.component.js';
 
 class NotFound extends React.Component {
+  componentWillMount() {
+    if(['/api-doc', '/api'].includes(window.location.pathname)) {
+      window.location(true);
+    }
+  }
+
   render() {
     return (
       <div className="ExpenseManager">

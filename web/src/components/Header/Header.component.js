@@ -5,9 +5,6 @@ import { inject, observer } from 'mobx-react';
 @observer
 class Header extends React.Component {
   render() {
-
-    console.log(window.location);
-
     return (
       <div className="em-navbar row mx-0">
         <div className="back-btn col-2">

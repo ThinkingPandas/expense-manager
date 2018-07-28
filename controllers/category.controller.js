@@ -208,6 +208,13 @@ module.exports.updateOne = async (req, res, next) => {
       });
     }
 
+    if (categoryResult.permanent) {
+      return next({
+        statusCode: 400,
+        message: 'Cannot modify a permanent category',
+      });
+    }
+
     await categoryResult.update({
       ...(!_.isNull(title) ? { title } : {}),
       ...(!_.isNull(description) ? { description } : {}),
@@ -252,6 +259,13 @@ module.exports.deleteOne = async (req, res, next) => {
       return next({
         statusCode: 400,
         message: 'Invalid category id',
+      });
+    }
+
+    if (categoryResult.permanent) {
+      return next({
+        statusCode: 400,
+        message: 'Cannot delete a permanent category',
       });
     }
 

@@ -3,7 +3,7 @@ import moment from 'moment';
 import numeral from 'numeral';
 import ReactTooltip from 'react-tooltip';
 import './App.scss';
-import Modal from './component/Modal/modal.component';
+import Modal from './components/Modal/modal.component';
 
 class App extends Component {
   constructor(props) {

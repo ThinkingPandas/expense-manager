@@ -12,6 +12,15 @@ module.exports = () => {
     {
       model: 'Category',
       data: {
+        title: 'Uncategorized',
+        description: 'Uncategorized expenses',
+        id: faker.random.uuid(),
+        permanent: true,
+      },
+    },
+    {
+      model: 'Category',
+      data: {
         title: 'Food',
         description: faker.lorem.sentence(),
         id: faker.random.uuid(),

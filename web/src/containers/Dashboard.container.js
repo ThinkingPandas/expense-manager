@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import numeral from 'numeral';
 import { Link } from 'simple-react-router';
 import ReactTooltip from 'react-tooltip';
@@ -7,9 +6,10 @@ import { inject, observer } from 'mobx-react';
 import '../App.scss';
 
 import HeaderComponent from '../components/Header/Header.component.js';
-import ModalComponent from '../components/Modal/modal.component.js';
+import ExpenseRow from '../components/ExpenseRow/ExpenseRow.component.js';
+import ExpenseForm from '../components/ExpenseForm/ExpenseForm.component.js';
 
-@inject('expenseStore')
+@inject('expenseStore', 'categoryStore')
 @observer
 class Dashboard extends React.Component {
   state = {
@@ -17,12 +17,15 @@ class Dashboard extends React.Component {
   };
 
   async componentWillMount() {
-    const { fetchAll } = this.props.expenseStore;
-    await fetchAll();
+    const { categoryStore, expenseStore } = this.props;
+    await expenseStore.fetchAll();
+    await expenseStore.getTotalExpenses();
+    await categoryStore.fetchAll();
   }
 
   render() {
-    const { expensesList } = this.props.expenseStore;
+    const { expensesList, totalExpenses } = this.props.expenseStore;
+    const { categoriesList } = this.props.categoryStore;
     const { createExpenseModalOpened } = this.state;
 
     return (
@@ -41,7 +44,7 @@ class Dashboard extends React.Component {
 
             <div className="em-dash-header">
               <div className="total-expense mt-2">
-                <h2>₱{numeral(100000).format('0,0.00')}</h2>
+                <h2>₱{numeral(totalExpenses).format('0,0.00')}</h2>
                 <small>TOTAL EXPENSE</small>
               </div>
               <div className="action-buttons row mx-0 my-2">
@@ -60,14 +63,15 @@ class Dashboard extends React.Component {
                   </Link>
                 </div>
                 <div className="col-sm-4 col-12 d-flex justify-content-center em-expense">
-                  <div
+                  <button
                     className="btn"
+                    disabled={categoriesList.length === 0}
                     onClick={() =>
                       this.setState({ createExpenseModalOpened: true })
                     }
                   >
                     <small>CREATE EXPENSE</small>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>
@@ -76,42 +80,7 @@ class Dashboard extends React.Component {
               {expensesList.length ? (
                 <div>
                   {expensesList.map((r, i) => (
-                    <div className="expense-entry row mx-0 mb-2">
-                      <div className="col-md-9 col-8 px-1">
-                        <div>
-                          <small className="font-weight-bold">{r.title}</small>
-                        </div>
-                        <div>
-                          <small className="expense-category">
-                            {r.category.title}
-                          </small>
-                          <small> {moment(r.date).format('ll')}</small>
-                        </div>
-                      </div>
-                      <div className="col-md-3 col-4 d-flex justify-content-between flex-column px-1">
-                        <h6 className="m-0 text-right word-break-all">
-                          ₱ {numeral(r.value).format('0,0.00')}
-                        </h6>
-                        <div className="row mx-0 justify-content-end">
-                          <div
-                            className="circle-btn"
-                            onClick={() =>
-                              this._handleControlModal('editExpense', 'open')
-                            }
-                          >
-                            <span className="material-icons">edit</span>
-                          </div>
-                          <div
-                            className="circle-btn"
-                            onClick={() =>
-                              this._handleControlModal('deleteExpense', 'open')
-                            }
-                          >
-                            <span className="material-icons">delete</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <ExpenseRow key={r.id} {...r} />
                   ))}
                 </div>
               ) : (
@@ -124,54 +93,7 @@ class Dashboard extends React.Component {
         </div>
 
         {createExpenseModalOpened && (
-          <ModalComponent
-            onClose={() => this.setState({ createExpenseModalOpened: false })}
-            onSave={() => this.submitNewExpense()}
-            title="Create Expense"
-          >
-            <div className="form-group">
-              <input
-                placeholder="Title"
-                type="text"
-                class="form-control form-control-sm"
-              />
-            </div>
-            <div className="form-group">
-              <select
-                className="form-control form-control-sm"
-                onChange={() => this._handleControlModal('addCategory', 'open')}
-              >
-                <option disabled selected>
-                  Category
-                </option>
-                <option>+ Add Category</option>
-              </select>
-            </div>
-
-            <div className="form-group">
-              <input
-                required
-                type="date"
-                class="form-control form-control-sm"
-              />
-            </div>
-
-            <div className="form-group">
-              <div class="input-group">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" id="inputGroupPrepend3">
-                    ₱
-                  </span>
-                </div>
-                <input
-                  type="number"
-                  className=" form-control"
-                  placeholder="0.00"
-                  aria-describedby="inputGroupPrepend3"
-                />
-              </div>
-            </div>
-          </ModalComponent>
+          <ExpenseForm closeModal={() => this.setState({ createExpenseModalOpened: false })} />
         )}
       </div>
     );

@@ -63,7 +63,7 @@ module.exports.createOne = async (req, res, next) => {
 
     const category = await Category.findOne({ where: { id: category_id }, raw: true});
 
-    if(!_.isNull(category_id) && !category) {
+    if(category_id && !category) {
       return next({
         statusCode: 400,
         message: `Category ${category_id} does not exist`
@@ -133,7 +133,7 @@ module.exports.fetchAll = async (req, res, next) => {
       include: [{
         model: Category,
         as: 'category',
-        attributes: ['title'],
+        attributes: ['title', 'id'],
       }],
     });
     return res.json(expenseResults);
@@ -336,6 +336,38 @@ module.exports.deleteOne = async (req, res, next) => {
 
     return res.json({
       message: `Expense ${expense_id} deleted.`,
+    });
+  } catch (e) {
+    next(e);
+  }
+};
+
+/*
+  @api [get] /api/total_expenses
+  description: Get total expenses
+  tags: ['Expenses']
+  responses:
+    "200":
+      schema:
+        type: object
+        properties:
+          totalExpenses:
+            type: number
+            example: 123123.23
+*/
+module.exports.fetchTotalExpenses = async (req, res, next) => {
+  try {
+    const expenseResults = await Expense.findAll({
+      attributes: ['value'],
+      raw: true,
+    });
+
+    const totalExpenses = _.sum(expenseResults.map((expense) => expense.value)) || 0;
+
+    return res.json({
+      data: {
+        totalExpenses,
+      }
     });
   } catch (e) {
     next(e);

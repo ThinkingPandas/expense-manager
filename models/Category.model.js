@@ -8,7 +8,8 @@ module.exports = (sequelize) => {
       type: Sequelize.UUID,
       primaryKey: true,
       defaultValue: Sequelize.UUIDV4,
-    }
+    },
+    permanent: { type: Sequelize.BOOLEAN, defaultValue: false }
   });
 
   return Category;

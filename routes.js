@@ -10,11 +10,15 @@ const categoryCtrl = require('./controllers/category.controller.js');
 
 // expenses routes
 router
+  .route('/total_expenses')
+  .get(expenseCtrl.fetchTotalExpenses);
+
+router
   .route('/expenses')
   .post(
     ev({
       body: {
-        category_id: Joi.string(),
+        category_id: Joi.string().allow('').optional(),
         title: Joi.string().required(),
         date: Joi.string().required(),
         value: Joi.number().required(),

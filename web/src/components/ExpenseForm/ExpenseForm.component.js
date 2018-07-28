@@ -1,5 +1,6 @@
 import React from 'react';
 import Joi from 'joi';
+import _ from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import * as Datetime from 'react-datetime';
@@ -11,8 +12,8 @@ import ModalComponent from '../Modal/modal.component.js';
 @observer
 class ExpenseForm extends React.Component {
   state = {
-    id: '',
     form: this.props.form || {
+      id: '',
       title: '',
       date: moment().toJSON(),
       category_id: this.props.categoryStore.uncategorizedCategory.id,
@@ -21,29 +22,35 @@ class ExpenseForm extends React.Component {
   };
 
   submitForm = async () => {
-    const schema = Joi.object().keys({
-        title: Joi.string().alphanum().required(),
-        date: Joi.string(),
+    try {
+      const schema = Joi.object().keys({
+        title: Joi.string().required(),
+        date: Joi.string().required(),
         category_id: Joi.string().allow(['', null]),
-        value: Joi.number().integer().min(1),
-    });
+        value: Joi.number().min(1),
+      });
 
-    const result = Joi.validate(this.state.form, schema);
-    if (!result.error) {
-      const { createOne, fetchAll, getTotalExpenses } = this.props.expenseStore;
+      const result = Joi.validate(_.pick(this.state.form, ['title', 'date', 'category_id', 'value']), schema);
+      if (!result.error) {
+        const { createOne, updateOne, fetchAll, getTotalExpenses } = this.props.expenseStore;
 
-      if(!this.state.id) {
-        await createOne(this.state.form);
+        if(!this.state.form.id) {
+          await createOne(this.state.form);
+          alert('Successfully created a new expense!')
+        } else {
+          await updateOne(this.state.form);
+          alert('Successfully updated a new expense!')
+        }
+
+        await fetchAll();
+        await getTotalExpenses();
+        this.props.closeModal();
       } else {
-        // await updateOne(this.state.form);
+        alert(`Some fields in the form are invalid. Please correct them. \n${result.error.message}`);
       }
-
-      alert('Successfully created a new expense!')
-      await fetchAll();
-      await getTotalExpenses();
-      this.props.closeModal();
-    } else {
-      alert(`Some fields in the form are invalid. Please correct them. \n${result.error.message}`);
+    } catch(e) {
+      alert('Something went wrong!')
+      console.error(e);
     }
   };
 
@@ -59,15 +66,17 @@ class ExpenseForm extends React.Component {
 
   render() {
     const { categoriesList, uncategorizedCategory } = this.props.categoryStore;
+    const { title, date, value, category_id } = this.state.form;
 
     return (
       <ModalComponent
-        onClose={() => this.props.closeModal()}
-        onSave={() => this.submitForm()}
+        onClose={this.props.closeModal}
+        onSave={this.submitForm}
         title="Create Expense"
       >
         <div className="form-group">
           <input
+            defaultValue={title}
             name="title"
             placeholder="Title"
             type="text"
@@ -79,7 +88,7 @@ class ExpenseForm extends React.Component {
           <select
             name="category_id"
             className="form-control form-control-sm"
-            defaultValue={uncategorizedCategory.id}
+            defaultValue={category_id || uncategorizedCategory.id}
             onChange={this.setStateFromInput}
           >
             {categoriesList.map(category => (
@@ -91,7 +100,7 @@ class ExpenseForm extends React.Component {
         </div>
 
         <div className="form-group">
-          <Datetime defaultValue={moment()} inputProps={{ placeholder: 'Expense Date' }} onChange={this.setDateInput} />
+          <Datetime defaultValue={date || moment()} inputProps={{ placeholder: 'Expense Date' }} onChange={this.setDateInput} />
         </div>
 
         <div className="form-group">
@@ -103,6 +112,7 @@ class ExpenseForm extends React.Component {
             </div>
             <input
               type="number"
+              defaultValue={value}
               name="value"
               className=" form-control"
               placeholder="0.00"

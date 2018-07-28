@@ -276,7 +276,7 @@ module.exports.fetchOne = async (req, res, next) => {
 module.exports.updateOne = async (req, res, next) => {
   try {
     const { expense_id } = req.params;
-    const { title, description } = req.body;
+    const { title, description, value, date } = req.body;
 
     const expenseResult = await Expense.findOne({ where: { id: expense_id } });
 
@@ -288,6 +288,8 @@ module.exports.updateOne = async (req, res, next) => {
     }
 
     await expenseResult.update({
+      ...(!_.isNull(date) ? { date } : {}),
+      ...(!_.isNull(value) ? { value } : {}),
       ...(!_.isNull(title) ? { title } : {}),
       ...(!_.isNull(description) ? { description } : {}),
     });

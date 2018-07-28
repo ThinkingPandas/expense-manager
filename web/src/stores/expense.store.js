@@ -36,6 +36,15 @@ class ExpenseStore {
   }
 
   @action.bound
+  async deleteOne(id) {
+    try {
+      await axios.delete(`${API_URL}/expenses/${id}`)
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  @action.bound
   async getTotalExpenses(data) {
     try {
       const result = await axios.get(`${API_URL}/total_expenses`)

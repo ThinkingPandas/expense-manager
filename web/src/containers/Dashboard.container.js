@@ -8,12 +8,33 @@ import '../App.scss';
 import HeaderComponent from '../components/Header/Header.component.js';
 import ExpenseRow from '../components/ExpenseRow/ExpenseRow.component.js';
 import ExpenseForm from '../components/ExpenseForm/ExpenseForm.component.js';
+import ExpenseDeleteConfirmModal from '../components/ExpenseDeleteConfirmModal/ExpenseDeleteConfirmModal.component.js';
 
 @inject('expenseStore', 'categoryStore')
 @observer
 class Dashboard extends React.Component {
   state = {
-    createExpenseModalOpened: false,
+    upsertExpenseModalOpened: false,
+    deleteExpenseModalOpened: false,
+    editExpenseForm: null,
+    deleteExpenseId: null,
+  };
+
+  handleClickEditExpense = (expense) => {
+    this.setState({
+      upsertExpenseModalOpened: true,
+      editExpenseForm: {
+        ...expense,
+        category_id: expense.category.id,
+      }
+    })
+  };
+
+  handleClickDeleteExpense = (expense) => {
+    this.setState({
+      deleteExpenseModalOpened: true,
+      deleteExpenseId: expense.id,
+    })
   };
 
   async componentWillMount() {
@@ -26,7 +47,7 @@ class Dashboard extends React.Component {
   render() {
     const { expensesList, totalExpenses } = this.props.expenseStore;
     const { categoriesList } = this.props.categoryStore;
-    const { createExpenseModalOpened } = this.state;
+    const { upsertExpenseModalOpened, deleteExpenseModalOpened, editExpenseForm, deleteExpenseId } = this.state;
 
     return (
       <div className="ExpenseManager">
@@ -67,7 +88,10 @@ class Dashboard extends React.Component {
                     className="btn"
                     disabled={categoriesList.length === 0}
                     onClick={() =>
-                      this.setState({ createExpenseModalOpened: true })
+                      this.setState({
+                        editExpenseForm: null,
+                        upsertExpenseModalOpened: true,
+                      })
                     }
                   >
                     <small>CREATE EXPENSE</small>
@@ -80,7 +104,16 @@ class Dashboard extends React.Component {
               {expensesList.length ? (
                 <div>
                   {expensesList.map((r, i) => (
-                    <ExpenseRow key={r.id} {...r} />
+                    <ExpenseRow
+                      key={r.id}
+                      {...r}
+                      handleClickEditExpense={() =>
+                        this.handleClickEditExpense(r)
+                      }
+                      handleClickDeleteExpense={() =>
+                        this.handleClickDeleteExpense(r)
+                      }
+                    />
                   ))}
                 </div>
               ) : (
@@ -92,8 +125,22 @@ class Dashboard extends React.Component {
           </div>
         </div>
 
-        {createExpenseModalOpened && (
-          <ExpenseForm closeModal={() => this.setState({ createExpenseModalOpened: false })} />
+        {upsertExpenseModalOpened && (
+          <ExpenseForm
+            form={editExpenseForm}
+            closeModal={() =>
+              this.setState({ upsertExpenseModalOpened: false })
+            }
+          />
+        )}
+
+        {deleteExpenseModalOpened && (
+          <ExpenseDeleteConfirmModal
+            expenseId={deleteExpenseId}
+            closeModal={() =>
+              this.setState({ deleteExpenseModalOpened: false })
+            }
+          />
         )}
       </div>
     );

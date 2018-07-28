@@ -12,6 +12,7 @@ before_script:
 cache:
   paths:
     - node_modules/
+    - web/node_modules/
 
 stages:
   - deploy
@@ -19,6 +20,7 @@ stages:
 deploy to production:
   stage: deploy
   script:
+    - git init
     - git config --global user.name "Justin Sanciangco"
     - git config --global user.email "justin@thinkingpandas.com"
     - rm -rf .git

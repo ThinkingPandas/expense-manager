@@ -10,7 +10,7 @@ class Header extends React.Component {
         <div className="back-btn col-2">
           {window.location.pathname !== '/' ? (
             <Link href="/">
-              <div class="btn">
+              <div className="btn">
                 <span>◀</span>
               </div>
             </Link>

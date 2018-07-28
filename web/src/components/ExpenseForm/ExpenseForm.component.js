@@ -72,7 +72,7 @@ class ExpenseForm extends React.Component {
       <ModalComponent
         onClose={this.props.closeModal}
         onSave={this.submitForm}
-        title="Create Expense"
+        title="Expense Form"
       >
         <div className="form-group">
           <input
@@ -100,7 +100,7 @@ class ExpenseForm extends React.Component {
         </div>
 
         <div className="form-group">
-          <Datetime defaultValue={date || moment()} inputProps={{ placeholder: 'Expense Date' }} onChange={this.setDateInput} />
+          <Datetime defaultValue={moment(date) || moment()} inputProps={{ placeholder: 'Expense Date' }} onChange={this.setDateInput} />
         </div>
 
         <div className="form-group">

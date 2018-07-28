@@ -48,7 +48,6 @@ class ExpenseStore {
   async getTotalExpenses(data) {
     try {
       const result = await axios.get(`${API_URL}/total_expenses`)
-      console.log(result);
       this.totalExpenses = result.data.data.totalExpenses;
     } catch(e) {
       console.error(e);

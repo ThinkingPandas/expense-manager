@@ -27,7 +27,7 @@ HTTP_PROTOCOL=http // or `https`
 ####### REACT APP ENV VARS #########
 
 # Full path to api
-API_URL=http://localhost:8080/api
+REACT_APP_API_URL=http://localhost:8080/api
 ```
 
 4. Build api-docs: `npm run build:api-doc`

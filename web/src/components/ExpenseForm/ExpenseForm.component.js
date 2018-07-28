@@ -39,7 +39,7 @@ class ExpenseForm extends React.Component {
           alert('Successfully created a new expense!')
         } else {
           await updateOne(this.state.form);
-          alert('Successfully updated a new expense!')
+          alert('Successfully updated a expense!')
         }
 
         await fetchAll();

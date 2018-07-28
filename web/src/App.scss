@@ -110,6 +110,16 @@ $material-icons-font-size: 15px !default;
         }
 
         .em-category {
+            .category-header {
+              display: flex;
+              flex-direction: row;
+              margin-bottom: 10px;
+
+              .btn {
+                margin-left: 20px;
+              }
+            }
+
             .category-entry {
                 background-color: white;
                 padding: 0.5rem;

@@ -9,6 +9,7 @@ class ReportsStore {
 
   @observable doughnutChartLabels = [];
   @observable doughnutChartData = [];
+  @observable doughnutChartTotals = [];
 
   @computed
   get chartDataObject() {
@@ -71,7 +72,8 @@ class ReportsStore {
     const result = await axios.get(`${API_URL}/reports/doughnut`);
 
     this.doughnutChartLabels.replace(Object.keys(result.data.data));
-    this.doughnutChartData.replace(Object.values(result.data.data));
+    this.doughnutChartData.replace(Object.values(result.data.data).map((d) => d.percent));
+    this.doughnutChartTotals.replace(Object.values(result.data.data).map((d) => d.total));
   }
 }
 

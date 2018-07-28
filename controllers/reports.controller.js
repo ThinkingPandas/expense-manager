@@ -83,7 +83,10 @@ module.exports.fetchReportDoughnut = async (req, res, next) => {
     }
 
     for(const [category, categoryTotal] of Object.entries(returnData)) {
-      returnData[category] = +((categoryTotal / total) * 100).toFixed(2);
+      returnData[category] = {
+        percent: +((categoryTotal / total) * 100).toFixed(2),
+        total: categoryTotal,
+      }
     }
 
     return res.json({ data: returnData });

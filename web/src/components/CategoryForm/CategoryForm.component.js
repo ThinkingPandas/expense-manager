@@ -33,7 +33,7 @@ class CategoryForm extends React.Component {
           alert('Successfully created a new category!')
         } else {
           await updateOne(this.state.form);
-          alert('Successfully updated a new category!')
+          alert('Successfully updated a category!')
         }
 
         await fetchAll();

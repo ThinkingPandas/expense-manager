@@ -54,14 +54,20 @@ class Dashboard extends React.Component {
         <HeaderComponent />
         <div className="em-body">
           <div className="em-dash-table row m-3">
-            <div
-              onClick={() => this._handleControlModal('createExpense', 'open')}
+            <button
+              disabled={categoriesList.length === 0}
+              onClick={() =>
+                this.setState({
+                  editExpenseForm: null,
+                  upsertExpenseModalOpened: true,
+                })
+              }
               className="em-fab-expense"
               data-tip="Create Expense"
             >
               <span>+</span>
               <ReactTooltip />
-            </div>
+            </button>
 
             <div className="em-dash-header">
               <div className="total-expense mt-2">

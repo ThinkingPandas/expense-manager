@@ -48,7 +48,21 @@ class CategoryContainer extends React.Component {
         <div className="em-body">
           <div className="em-category row mx-0 my-3">
             <div className="col-12">
-              <h4>CATEGORIES</h4>
+              <div className="category-header">
+                <h4>CATEGORIES</h4>
+                <button
+                  className="btn"
+                  disabled={categoriesList.length === 0}
+                  onClick={() =>
+                    this.setState({
+                      editCategoryForm: null,
+                      upsertCategoryModalOpened: true,
+                    })
+                  }
+                >
+                  <small>CREATE CATEGORY</small>
+                </button>
+              </div>
               {categoriesList.length ? (
                 <div>
                   {categoriesList.map((r, i) => (

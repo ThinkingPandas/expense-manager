@@ -14,6 +14,8 @@ class ReportContainer extends React.Component {
   }
 
   render() {
+    const { doughnutChartTotals } = this.props.reportsStore;
+
     return (
       <div className="ExpenseManager">
         <HeaderComponent />
@@ -37,6 +39,15 @@ class ReportContainer extends React.Component {
                 height={500}
                 options={{
                   maintainAspectRatio: false,
+                  tooltips: {
+                    enabled: true,
+                    callbacks: {
+                      label: function(tooltipItems, data) {
+
+                        return `${data.labels[tooltipItems.index]} - ${data.datasets[0].data[tooltipItems.index]}% ($${doughnutChartTotals[tooltipItems.index].toFixed(2)})`;
+                      },
+                    },
+                  },
                 }}
               />
             </div>

@@ -5,7 +5,9 @@ before_script:
   - echo "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
   - chmod 600 ~/.ssh/id_rsa
   - ssh-keyscan -H 'thinkingpandas.com' >> ~/.ssh/known_hosts
+  - npm install
   - cd web && npm install && npm run build
+  - npm run build:api-doc
 
 cache:
   paths:
@@ -22,6 +24,7 @@ deploy to production:
     - rm -rf .git
     - git add .
     - git add -f build/
+    - git add -f api-doc/swagger.json
     - git rm --cached -r web
     - git commit -m 'deployment'
     - git remote add dokku dokku@thinkingpandas.com:expense-manager

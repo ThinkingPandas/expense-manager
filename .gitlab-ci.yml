@@ -6,7 +6,7 @@ before_script:
   - chmod 600 ~/.ssh/id_rsa
   - ssh-keyscan -H 'thinkingpandas.com' >> ~/.ssh/known_hosts
   - npm install
-  - cd web && npm install && npm run build
+  - (cd web ; npm install ; npm run build)
   - npm run build:api-doc
 
 cache:

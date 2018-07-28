@@ -20,10 +20,10 @@ stages:
 deploy to production:
   stage: deploy
   script:
+    - rm -rf .git
     - git init
     - git config --global user.name "Justin Sanciangco"
     - git config --global user.email "justin@thinkingpandas.com"
-    - rm -rf .git
     - git add .
     - git add -f build/
     - git add -f api-doc/swagger.json

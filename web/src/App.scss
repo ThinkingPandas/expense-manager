@@ -3,7 +3,7 @@ $material-icons-font-size: 15px !default;
 
 @import '~material-icons/iconfont/material-icons.scss';
 
-.ExpenseManager {
+.ExpenseManager, .CategoryManager, .ReportManager {
     display: flex;
     height: 100%;
     flex-direction: column;

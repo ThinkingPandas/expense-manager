@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { Category } = sequelizeInstance.db.models;
+const { Category, Expense } = sequelizeInstance.db.models;
 
 /*
   @api [post] /api/categories
@@ -268,6 +268,15 @@ module.exports.deleteOne = async (req, res, next) => {
         message: 'Cannot delete a permanent category',
       });
     }
+
+    const uncategorizedCategory = await Category.findOne({
+      where: { title: 'Uncategorized' },
+    });
+
+    await Expense.update(
+      { category_id: uncategorizedCategory.id },
+      { where: { category_id: categoryResult.id } }
+    );
 
     await categoryResult.destroy();
 

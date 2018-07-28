@@ -3,20 +3,47 @@ import { inject, observer } from 'mobx-react';
 import '../App.scss';
 
 import HeaderComponent from '../components/Header/Header.component.js';
+import CategoryRowComponent from '../components/CategoryRow/CategoryRow.component.js';
+import CategoryForm from '../components/CategoryForm/CategoryForm.component.js';
+import CategoryDeleteConfirmModal from '../components/CategoryDeleteConfirmModal/CategoryDeleteConfirmModal.component.js';
 
 @inject('categoryStore')
 @observer
 class CategoryContainer extends React.Component {
+  state = {
+    upsertCategoryModalOpened: false,
+    deleteCategoryModalOpened: false,
+    editCategoryForm: null,
+    deleteCategoryId: null,
+  };
+
   async componentWillMount() {
     const { fetchAll } = this.props.categoryStore;
     await fetchAll();
   }
 
+  handleClickEditCategory = category => {
+    this.setState({
+      upsertCategoryModalOpened: true,
+      editCategoryForm: {
+        ...category,
+      },
+    });
+  };
+
+  handleClickDeleteCategory = category => {
+    this.setState({
+      deleteCategoryModalOpened: true,
+      deleteCategoryId: category.id,
+    });
+  };
+
   render() {
+    const { upsertCategoryModalOpened, deleteCategoryModalOpened, editCategoryForm, deleteCategoryId } = this.state;
     const { categoriesList } = this.props.categoryStore;
 
     return (
-      <div className="ExpenseManager">
+      <div className="CategoryManager">
         <HeaderComponent />
         <div className="em-body">
           <div className="em-category row mx-0 my-3">
@@ -25,36 +52,16 @@ class CategoryContainer extends React.Component {
               {categoriesList.length ? (
                 <div>
                   {categoriesList.map((r, i) => (
-                    <div className="category-entry row mx-0 mb-2">
-                      <div className="col-md-10 col-9 px-1">
-                        <div>
-                          <span className="font-weight-bold">{r.title}</span>
-                        </div>
-                        <div>
-                          <small>{r.description}</small>
-                        </div>
-                      </div>
-                      <div className="col-md-2 col-3 d-flex justify-content-between flex-column px-1">
-                        <div className="row mx-0 justify-content-end">
-                          <div
-                            className="circle-btn"
-                            onClick={() =>
-                              this._handleControlModal('editCategory', 'open')
-                            }
-                          >
-                            <span class="material-icons">edit</span>
-                          </div>
-                          <div
-                            className="circle-btn"
-                            onClick={() =>
-                              this._handleControlModal('deleteCategory', 'open')
-                            }
-                          >
-                            <span class="material-icons">delete</span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    <CategoryRowComponent
+                      key={r.id}
+                      {...r}
+                      handleClickEditCategory={() =>
+                        this.handleClickEditCategory(r)
+                      }
+                      handleClickDeleteCategory={() =>
+                        this.handleClickDeleteCategory(r)
+                      }
+                    />
                   ))}
                 </div>
               ) : (
@@ -65,6 +72,24 @@ class CategoryContainer extends React.Component {
             </div>
           </div>
         </div>
+
+        {upsertCategoryModalOpened && (
+          <CategoryForm
+            form={editCategoryForm}
+            closeModal={() =>
+              this.setState({ upsertCategoryModalOpened: false })
+            }
+          />
+        )}
+
+        {deleteCategoryModalOpened && (
+          <CategoryDeleteConfirmModal
+            categoryId={deleteCategoryId}
+            closeModal={() =>
+              this.setState({ deleteCategoryModalOpened: false })
+            }
+          />
+        )}
       </div>
     );
   }

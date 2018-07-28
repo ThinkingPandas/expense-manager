@@ -16,6 +16,24 @@ class CategoryStore {
     }
   }
 
+  @action.bound
+  async updateOne(data) {
+    try {
+      await axios.put(`${API_URL}/categories/${data.id}`, data)
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  @action.bound
+  async deleteOne(id) {
+    try {
+      await axios.delete(`${API_URL}/categories/${id}`)
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
   @computed
   get uncategorizedCategory() {
     return _.find(this.categoriesList, { title: 'Uncategorized' })

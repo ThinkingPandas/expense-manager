@@ -1,5 +1,5 @@
 import React from 'react';
-import Joi from 'joi';
+import Joi from 'joi-browser';
 import _ from 'lodash';
 import moment from 'moment';
 import PropTypes from 'prop-types';

@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use('/api', apiRoutes);
 
 app.use('/api-doc', express.static('api-doc'))
-app.use('/', express.static('build'))
+app.use('/app', express.static('build'))
 
 app.listen(PORT, async () => {
   try {

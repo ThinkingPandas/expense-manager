@@ -62,8 +62,12 @@ router
 
 // reports routes
 router
-  .route('/reports')
-  .get(reportsCtrl.fetchAll);
+  .route('/reports/bar')
+  .get(reportsCtrl.fetchReportBar);
+
+router
+  .route('/reports/doughnut')
+  .get(reportsCtrl.fetchReportDoughnut);
 
 // categories routes
 router
@@ -110,8 +114,7 @@ router
     categoryCtrl.deleteOne
   );
 
-router.use((err, req, res, next) => {
-  // eslint-disable-line
+router.use((err, req, res, next) => { //eslint-disable-line
   logError(JSON.stringify(err.stack || err, null, 2));
 
   if (err instanceof ev.ValidationError) {

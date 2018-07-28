@@ -1,156 +1,93 @@
+const moment = require('moment');
+const _ = require('lodash');
+
+const { Expense, Category } = sequelizeInstance.db.models;
+
 /*
-  @api [get] /api/reports
-  description: Get all reports
+  @api [get] /api/reports/bar
+  description: Get bar chart data
   tags: ['Reports']
-  parameters:
-    - in: body
-      name: body
-      description: Login a user
-      required: true
-      schema:
-        type: object
-        properties:
-          email:
-            type: string
-            example: "demo@demo.com"
-          password:
-            type: string
-            example: "demo"
   responses:
     "200":
-      description: "Login token"
       schema:
         type: object
-        properties:
-          data:
-            type: object
-            properties:
-              token:
-                type: string
-                example: "JWT_TOKEN HERE"
 */
-module.exports.fetchAll = async (req, res, next) => {
+module.exports.fetchReportBar = async (req, res, next) => {
   try {
-    return res.json([]);
+    // create return data
+    const returnData = {};
+
+    _.range(29).forEach(i => {
+      const day = moment()
+        .subtract(i, 'days')
+        .format('MMM DD');
+      returnData[day] = 0;
+    });
+
+    // query the expenses
+    const where = {
+      date: {
+        $between: [
+          moment()
+            .subtract(30, 'days')
+            .toDate(),
+          moment().toDate(),
+        ],
+      },
+    };
+
+    const expensesResults = await Expense.findAll({
+      where,
+      attributes: ['value', 'date'],
+      raw: true,
+      order: [['date', 'DESC']],
+    });
+
+    expensesResults.forEach(expense => {
+      const day = moment(expense.date).format('MMM DD');
+      returnData[day] = +expense.value;
+    });
+
+    return res.json({ data: returnData });
   } catch (e) {
     next(e);
   }
 };
 
 /*
-  @api [get] /api/reports/{expense_id}
-  description: Fetch expense details
+  @api [get] /api/reports/doughnut
+  description: Get dougnut chart data
   tags: ['Reports']
-  parameters:
-    - in: body
-      name: body
-      description: Login a user
-      required: true
-      schema:
-        type: object
-        properties:
-          email:
-            type: string
-            example: "demo@demo.com"
-          password:
-            type: string
-            example: "demo"
   responses:
     "200":
-      description: "Login token"
       schema:
         type: object
-        properties:
-          data:
-            type: object
-            properties:
-              token:
-                type: string
-                example: "JWT_TOKEN HERE"
 */
-module.exports.fetchOne = async (req, res, next) => {
+module.exports.fetchReportDoughnut = async (req, res, next) => {
   try {
-    return res.json({});
+    // create return data
+    const returnData = {};
+    let total = 0;
+
+    const categories = await Category.findAll();
+
+    for (const category of categories) {
+      const expenses = await category.getExpenses({
+        raw: true,
+        attributes: ['value'],
+      });
+
+      returnData[category.title] =
+        _.sum(expenses.map(expense => expense.value)) || 0;
+      total += returnData[category.title];
+    }
+
+    for(const [category, categoryTotal] of Object.entries(returnData)) {
+      returnData[category] = +((categoryTotal / total) * 100).toFixed(2);
+    }
+
+    return res.json({ data: returnData });
   } catch (e) {
     next(e);
   }
 };
-
-/*
-  @api [put] /api/reports/{expense_id}
-  description: Update a expense
-  tags: ['Reports']
-  parameters:
-    - in: body
-      name: body
-      description: Login a user
-      required: true
-      schema:
-        type: object
-        properties:
-          email:
-            type: string
-            example: "demo@demo.com"
-          password:
-            type: string
-            example: "demo"
-  responses:
-    "200":
-      description: "Login token"
-      schema:
-        type: object
-        properties:
-          data:
-            type: object
-            properties:
-              token:
-                type: string
-                example: "JWT_TOKEN HERE"
-*/
-module.exports.updateOne = async (req, res, next) => {
-  try {
-    return res.json({});
-  } catch (e) {
-    next(e);
-  }
-};
-
-/*
-  @api [delete] /api/reports/{expense_id}
-  description: Delete a expense
-  tags: ['Reports']
-  parameters:
-    - in: body
-      name: body
-      description: Login a user
-      required: true
-      schema:
-        type: object
-        properties:
-          email:
-            type: string
-            example: "demo@demo.com"
-          password:
-            type: string
-            example: "demo"
-  responses:
-    "200":
-      description: "Login token"
-      schema:
-        type: object
-        properties:
-          data:
-            type: object
-            properties:
-              token:
-                type: string
-                example: "JWT_TOKEN HERE"
-*/
-module.exports.deleteOne = async (req, res, next) => {
-  try {
-    return res.json({});
-  } catch (e) {
-    next(e);
-  }
-};
-

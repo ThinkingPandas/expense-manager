@@ -1,9 +1,9 @@
 # Expense Manager
 
 ## Relevant Links
-[Demo](https://expense-manager.thinkingpandas.com/)
-[API Doc](https://expense-manager.thinkingpandas.com/api-doc)
-[REST Endpoint](https://expense-manager.thinkingpandas.com/api)
+* [Demo](https://expense-manager.thinkingpandas.com/)
+* [API Doc](https://expense-manager.thinkingpandas.com/api-doc)
+* [REST Endpoint](https://expense-manager.thinkingpandas.com/api)
 
 ## Description
 
@@ -25,7 +25,11 @@ For simplicity, we combined both projects into a single repository. For the same
 
 We also took the liberty of adding in a GitLab CI file (.gitlab-ci.yml). Any changes made is automatically built, pushed and deployed to our servers.
 
-## API SERVER - Project Structure
+
+## Project Structure
+```
+## API Server
+
   .
   ├── api-doc                     # html/css files of the api-document. hosted on /api-doc
   ├── controllers                 # API Server Controllers
@@ -45,7 +49,7 @@ We also took the liberty of adding in a GitLab CI file (.gitlab-ci.yml). Any cha
   ├── .db.sql                      # intial data. NOT NEEDED -- on run, application automatically generates test data through fixtures.js
   └── README.md                 # this file
 
-## REACT APP - Project Structure
+## REACT APP
   /web
   ├── src
       ├── components                 # React resuable components
@@ -54,7 +58,7 @@ We also took the liberty of adding in a GitLab CI file (.gitlab-ci.yml). Any cha
   ├── App.scss                     # Application-wide stylesheet
   ├── config.js                     # config file for react app
   ├── routes.js                     # react application routes
-
+```
 
 ## Pre-requisites
   Tested with `Node v10.5.0` and `npm v5.6.0`
